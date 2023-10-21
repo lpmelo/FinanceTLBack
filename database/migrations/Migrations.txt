@@ -1,0 +1,30 @@
+CREATE DATABASE FinanceDB;
+
+CREATE TABLE users (
+ id_user INT NOT NULL AUTO_INCREMENT,
+ username VARCHAR(50),
+ password VARCHAR(50),
+ name VARCHAR (150),
+ nickname VARCHAR (10), 
+ PRIMARY KEY (id_user)
+);
+
+CREATE TABLE entries (
+ id_entrada INT NOT NULL AUTO_INCREMENT,
+ description VARCHAR(50),
+ value DECIMAL(65,2),
+ id_user INT NOT NULL,
+ data DATE,
+ PRIMARY KEY (id_entrada),
+ FOREIGN KEY (id_user) REFERENCES users(id_user)
+);
+
+CREATE TABLE exits (
+ id_saida INT NOT NULL AUTO_INCREMENT,
+ description VARCHAR(50),
+ value DECIMAL(65,2),
+ id_user INT NOT NULL,
+ data DATE,
+ PRIMARY KEY (id_saida),
+ FOREIGN KEY (id_user) REFERENCES users(id_user)
+);
