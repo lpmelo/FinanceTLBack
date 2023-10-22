@@ -2,6 +2,11 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "start": "php artisan serve",
+        "migration": "php artisan make:migration",
+        "migrate": "php artisan migrate",
+        "migrate-status": "php artisan migrate:status",
+        "migrate-rollback": "php artisan migrate:rollback",
         "dev": "vite",
         "build": "vite build"
     },
