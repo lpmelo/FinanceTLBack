@@ -16,8 +16,11 @@ class Authentication extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id_session',
         'isLogged',
         'login_date',
         'id_user_fk',
     ];
+
+    protected $primaryKey = 'id_session';
 }
