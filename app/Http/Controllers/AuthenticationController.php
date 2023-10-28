@@ -23,6 +23,7 @@ class AuthenticationController extends Controller
         $values = ['username' => $request['username'], "password" => $request['password'], 'reason' => $request['reason']];
         $username = $request['username'];
         $password = $request['password'];
+        $previousLoggedUser = $request['user'];
         $reason = $request['reason'];
 
         $validateFields = $this->returnFieldsValidation();
@@ -34,19 +35,22 @@ class AuthenticationController extends Controller
         }
 
         if ($reason == 1) {
-            return $this->executeLogin($username, $password);
+            return $this->executeLogin($username, $password, $previousLoggedUser);
         }
 
         if ($reason == 2) {
-            return $this->executeLogout();
+            return $this->executeLogout($previousLoggedUser);
         }
     }
 
-    private function executeLogin($username, $password)
+    private function executeLogin($username, $password, $previousLoggedUser)
     {
         $user = User::where('username', $username)->first();
 
         if ($user) {
+            if ($user->id != $previousLoggedUser) {
+                $this->executeLogout($previousLoggedUser);
+            }
             if (password_verify($password, $user->password)) {
                 $user_auth = Authentication::where('id_user_fk', $user->id)->first();
                 if ($user_auth->isLogged == 1) {
@@ -55,16 +59,35 @@ class AuthenticationController extends Controller
                 $user_auth->isLogged = 1;
                 $user_auth->login_date = gmdate('Y-m-d H:i:s');
                 $user_auth->update();
-
-                return response()->json(['user' => "$user->nickname logged with success", 'success' => true], 201);
+                return response()->json(['user' => $user->id, 'success' => true], 201);
             }
         }
 
         return response()->json(['error' => 'Wrong username or password', 'success' => false], 400);
     }
 
-    private function executeLogout()
+    private function executeLogout($userId)
     {
+        if ($userId) {
+            $user = User::where('id', $userId)->first();
+
+            if ($user) {
+                $user_auth = Authentication::where('id_user_fk', $user->id)->first();
+
+                if ($user_auth->isLogged == 1) {
+                    $user_auth->isLogged = 0;
+                    $user_auth->login_date = null;
+                    $user_auth->update();
+                    return response()->json(['success' => true, 'message' => 'User disconected with success'], 200);
+                } else {
+                    return response()->json(['success' => false, 'error' => 'User is not logged'], 400);
+                }
+            } else {
+                return response()->json(['success' => false, 'error' => 'Incorrect user informed'], 400);
+            }
+        } else {
+            return response()->json(['error' => 'User to logout is not informed', 'success' => false], 400);
+        }
     }
 
 

@@ -41,4 +41,8 @@ class Controller extends BaseController
             }
         }
     }
+
+    private function validateUser($userData)
+    {
+    }
 }
