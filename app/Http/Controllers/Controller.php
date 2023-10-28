@@ -16,8 +16,8 @@ class Controller extends BaseController
         if (isset($validationFields) && !empty($validationFields)) {
             foreach ($validationFields as $field => $fieldValue) {
                 if ($fieldValue['validation'] instanceof Closure) {
-                    if ($fieldValue['validation']($values[$field], $field)) {
-                        return $fieldValue['validation']($values[$field], $field);
+                    if ($fieldValue['validation']($values[$field], $field, $values)) {
+                        return $fieldValue['validation']($values[$field], $field, $values);
                     }
                 }
             }

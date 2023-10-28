@@ -20,7 +20,7 @@ class AuthenticationController extends Controller
 
     public function store(Request $request)
     {
-        $values = ['username' => $request['username'], "password" => $request['password'], 'reason' => $request['reason']];
+        $values = ['username' => $request['username'], "password" => $request['password'], 'reason' => $request['reason'], 'user' => $request['user']];
         $username = $request['username'];
         $password = $request['password'];
         $previousLoggedUser = $request['user'];
@@ -96,24 +96,28 @@ class AuthenticationController extends Controller
         $validation = [
             'username' => [
                 'validation' =>
-                function ($itemValue, $field) {
-                    if (is_string($itemValue)) {
-                        if (strlen($itemValue) > 50 || strlen($itemValue) < 5) {
-                            return response()->json(['error' => "Invalid $field value", "success" => false], 400);
+                function ($itemValue, $field, $values) {
+                    if (!($values['reason'] == 2)) {
+                        if (is_string($itemValue)) {
+                            if (strlen($itemValue) > 50 || strlen($itemValue) < 5) {
+                                return response()->json(['error' => "Invalid $field value", "success" => false], 400);
+                            }
+                        } else {
+                            return response()->json(['error' => "The $field is required and must be a string", "success" => false], 400);
                         }
-                    } else {
-                        return response()->json(['error' => "The $field is required and must be a string", "success" => false], 400);
                     }
                 }
             ], 'password' => [
                 'validation' =>
-                function ($itemValue, $field) {
-                    if (is_string($itemValue)) {
-                        if (strlen($itemValue) > 50 || strlen($itemValue) < 5) {
-                            return response()->json(['error' => "Invalid $field value", "success" => false], 400);
+                function ($itemValue, $field, $values) {
+                    if (!($values['reason'] == 2)) {
+                        if (is_string($itemValue)) {
+                            if (strlen($itemValue) > 50 || strlen($itemValue) < 5) {
+                                return response()->json(['error' => "Invalid $field value", "success" => false], 400);
+                            }
+                        } else {
+                            return response()->json(['error' => "The $field is required and must be a string", "success" => false], 400);
                         }
-                    } else {
-                        return response()->json(['error' => "The $field is required and must be a string", "success" => false], 400);
                     }
                 }
             ],
@@ -123,6 +127,16 @@ class AuthenticationController extends Controller
                     if ($itemValue != 1) {
                         if ($itemValue != 2) {
                             return response()->json(['error' => "Must inform $field value", 'success' => false]);
+                        }
+                    }
+                }
+            ],
+            'user' => [
+                'validation' =>
+                function ($itemValue, $field, $values) {
+                    if ($values['reason'] == 2) {
+                        if (!$itemValue) {
+                            return response()->json(['success' => false, 'error' => "Must inform $field value"]);
                         }
                     }
                 }
