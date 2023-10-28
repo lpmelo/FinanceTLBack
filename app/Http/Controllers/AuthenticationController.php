@@ -15,7 +15,22 @@ class AuthenticationController extends Controller
 
     public function show($id)
     {
-        return response()->json(['message' => 'teste']);
+        if ($id) {
+            $user = User::where('id', $id)->first();
+            if ($user) {
+                $user_auth = Authentication::where('id_user_fk', $user->id)->first();
+                if ($user_auth->isLogged == 1) {
+                    $user_auth->login_date = gmdate('Y-m-d H:i:s');
+                    $user_auth->update();
+                    return response()->json(['success' => true, 'nickname' => $user->nickname], 200);
+                } else {
+                    return response()->json(['success' => false, 'error' => 'User not logged'], 406);
+                }
+            } else {
+                return response()->json(['success' => false, 'error' => 'User do not exists'], 400);
+            }
+        }
+        return response()->json(['success' => false, 'error' => 'User not informed'], 400);
     }
 
     public function store(Request $request)
@@ -51,15 +66,16 @@ class AuthenticationController extends Controller
             if ($user->id != $previousLoggedUser) {
                 $this->executeLogout($previousLoggedUser);
             }
+
             if (password_verify($password, $user->password)) {
                 $user_auth = Authentication::where('id_user_fk', $user->id)->first();
                 if ($user_auth->isLogged == 1) {
-                    return response()->json(['message' => "User already logged", 'success' => false], 406);
+                    return response()->json(['error' => "User already logged", 'success' => false], 406);
                 }
                 $user_auth->isLogged = 1;
                 $user_auth->login_date = gmdate('Y-m-d H:i:s');
                 $user_auth->update();
-                return response()->json(['user' => $user->id, 'success' => true], 201);
+                return response()->json(['user' => $user->id, 'nickname' => $user->nickname, 'success' => true], 201);
             }
         }
 
