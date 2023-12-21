@@ -12,6 +12,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="{{asset('favicon.ico')}}">
     <link href="{{asset('css/app.css')}}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="antialiased">
@@ -25,7 +26,7 @@
             </div>
             <p class="routes-title">Rotas da API</p>
             <div class="api-routes-container">
-                <div class="default-card">
+                <div class="default-card" onclick="navigateTo('userview')">
                     <div class="card-title">
                         <p>Usuários</p>
                     </div>
@@ -35,7 +36,7 @@
                     </div>
                 </div>
 
-                <div class="default-card">
+                <div class="default-card" onclick="navigateTo('authview')">
                     <div class="card-title">
                         <p>Autenticação</p>
                     </div>
