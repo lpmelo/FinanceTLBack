@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('description', 50);
             $table->decimal('value', $precision = 65, $scale = 2);
             $table->foreignId('id_user_fk')->constrained('users');
-            $table->dateTimeTz('entrie_date', $precision = 0);
+            $table->date('entrie_date');
         });
     }
 
