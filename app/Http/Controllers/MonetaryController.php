@@ -164,8 +164,6 @@ class MonetaryController extends Controller
 
                                     if (!checkdate($month, $day, $year)) {
                                         return response()->json(['error' => "Invalid $field value", "success" => false], 400);
-                                    } elseif ($day != 1) {
-                                        return response()->json(['error' => "Invalid $field value", "success" => false], 400);
                                     }
                                 }
                             }
@@ -189,8 +187,6 @@ class MonetaryController extends Controller
                                     list($year, $month, $day) = explode('-', $itemValue);
 
                                     if (!checkdate($month, $day, $year)) {
-                                        return response()->json(['error' => "Invalid $field value", "success" => false], 400);
-                                    } elseif ($day != 1) {
                                         return response()->json(['error' => "Invalid $field value", "success" => false], 400);
                                     }
                                 }
