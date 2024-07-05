@@ -69,9 +69,6 @@ class AuthenticationController extends Controller
 
             if (password_verify($password, $user->password)) {
                 $user_auth = Authentication::where('id_user_fk', $user->id)->first();
-                if ($user_auth->isLogged == 1) {
-                    return response()->json(['error' => "User already logged", 'success' => false], 406);
-                }
                 $user_auth->isLogged = 1;
                 $user_auth->login_date = gmdate('Y-m-d H:i:s');
                 $user_auth->update();
