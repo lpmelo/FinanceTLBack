@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MoneyEntrieResource;
+use App\Http\Resources\MoneyExitResource;
 use App\Models\MoneyEntrie;
 use App\Models\MoneyExit;
 use App\Models\User;
@@ -9,9 +11,15 @@ use Illuminate\Http\Request;
 
 class MonetaryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(['message' => 'Route do not exist', 404]);
+        $responseCollection = ['incomingOptions' => [], 'outgoingOptions' => []];
+        $entriesOptions = MoneyEntrie::all()->where('id_user_fk', $request['id_user']);
+        $exitsOptions = MoneyExit::all()->where('id_user_fk', $request['id_user']);
+        $responseCollection['incomingOptions'] = MoneyEntrieResource::collection($entriesOptions);
+        $responseCollection['outgoingOptions'] = MoneyExitResource::collection($exitsOptions);
+
+        return response()->json(['success' => true, 'data' => $responseCollection], 200);
     }
 
     public function show($id)
