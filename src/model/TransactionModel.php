@@ -18,6 +18,7 @@ class TransactionModel extends Model
     protected $date;
     protected $recurrence;
     protected $plot_identification;
+    protected $plot_total_value;
     protected $plot_total;
     protected $plot_number;
     protected $created_at;
@@ -55,11 +56,13 @@ class TransactionModel extends Model
         }
     }
 
-    public function createTransaction(){
+    public function createTransaction()
+    {
         $recurrence = $this->recurrence ? 'Y' : 'N';
-        $plotIdentification = $this->plot_identification ? $this->plot_identification : 'null';
+        $plotIdentification = $this->plot_identification ? "'$this->plot_identification'" : 'null';
         $plotTotal = $this->plot_total ? $this->plot_total : 'null';
         $plotNumber = $this->plot_number ? $this->plot_number : 'null';
+        $plotTotalValue = $this->plot_total_value ? $this->plot_total_value : 'null';
 
         $query = "
         INSERT INTO $this->table_name
@@ -71,6 +74,7 @@ class TransactionModel extends Model
             `date`,
             recurrence,
             plot_identification,
+            plot_total_value,
             plot_total,
             plot_number,
             created_at,
@@ -84,6 +88,7 @@ class TransactionModel extends Model
             '$this->date',
             '$recurrence',
             $plotIdentification,
+            $plotTotalValue,
             $plotTotal,
             $plotNumber,
             current_timestamp(),
@@ -188,6 +193,16 @@ class TransactionModel extends Model
     public function generateUuidPlotIdentification()
     {
         $this->plot_identification = $this->generateUuid();
+    }
+
+    public function getPlotTotalValue()
+    {
+        return $this->plot_total_value;
+    }
+
+    public function setPlotTotalValue($plot_total_value)
+    {
+        return $this->plot_total_value = $plot_total_value;
     }
 
     public function getPlotTotal()

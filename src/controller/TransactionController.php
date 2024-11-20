@@ -74,7 +74,7 @@ class TransactionController extends Controller
             $idTypeFk = array_key_exists('id_type_fk', $body) ? $body['id_type_fk'] : null;
             $idGenderFk = array_key_exists('id_gender_fk', $body) ? $body['id_gender_fk'] : null;
             $plotTotal = array_key_exists('plot_total', $body) ? $body['plot_total'] : null;
-            $recurrence = array_key_exists('recurrence', $body) ? $body['recurrence'] : ($plotTotal ? true : null);
+            $recurrence = array_key_exists('recurrence', $body) ? $body['recurrence'] : (($plotTotal && $idGenderFk == 1) ? true : null);
 
 
             $userModel = new UserModel();
@@ -87,9 +87,9 @@ class TransactionController extends Controller
             }
 
             $transactionModel = new TransactionModel();
+            $transactionParamsModel = new TransactionParamModel();
 
             if (!empty($idTypeFk)) {
-                $transactionParamsModel = new TransactionParamModel();
                 $result = $transactionParamsModel->getTypeById($idTypeFk);
 
                 $validate_query_status = $this->validate_data_execution($result);
@@ -113,22 +113,31 @@ class TransactionController extends Controller
                     return $validate_query_status['throw_error'];
                 }
 
+                if ($idGenderFk == 1 && !$plotTotal) {
+                    return HttpErrors::code400("Isn't possible to create a plot transaction without the total of the plots to be calculated");
+                }
+
                 $transactionModel->setIdGenderFk($idGenderFk);
             } else {
                 $transactionModel->setIdGenderFk(3);
             }
 
-            if ($recurrence || $plotTotal) {
+            if ($recurrence || ($plotTotal && $idGenderFk == 1)) {
                 $transactionModel->setRecurrence($recurrence);
             }
 
-            if ($plotTotal) {
-                $plotValue = $value / $plotTotal;
+            if ($plotTotal && $idGenderFk == 1) {
+                if ($value > 0) {
+                    $plotValue = $value / $plotTotal;
 
-                $transactionModel->setPlotTotal($plotTotal);
-                $transactionModel->setPlotNumber(1);
-                $transactionModel->generateUuidPlotIdentification();
-                $transactionModel->setValue($plotValue);
+                    $transactionModel->setPlotTotal($plotTotal);
+                    $transactionModel->setPlotNumber(1);
+                    $transactionModel->generateUuidPlotIdentification();
+                    $transactionModel->setPlotTotalValue($value);
+                    $transactionModel->setValue($plotValue);
+                } else {
+                    return HttpErrors::code400("Isn't possible to create a plot transaction with negative values!");
+                }
             }
 
             $transactionModel->setIdUserFk($idUserFk);
