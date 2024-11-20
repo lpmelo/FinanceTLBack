@@ -99,7 +99,6 @@ class Controller
                             if (!checkdate($month, $day, $year)) {
                                 $invalid_field_str = "$field_name não é uma data válida";
                             }
-
                         }
                         break;
                     case 'uuid':
@@ -111,7 +110,6 @@ class Controller
                             if (strlen($field_value) != 36) {
                                 $invalid_field_str = "$field_name não é um uuid valido";
                             }
-
                         } else {
                             $invalid_field_str = "$field_name não é uma string";
                         }
@@ -141,11 +139,9 @@ class Controller
                                     }
                                 }
                             }
-
                         }
                         break;
                 }
-
             } else {
                 $invalid_field_str = "$field_name não enviado";
             }
@@ -185,14 +181,15 @@ class Controller
      * @param mixed $execution_response Retorno da execucao da query, seja ele sucesso retorna um objeto com o status QueryHasRun
      * @return array['query_has_run']
      */
-    public function validate_data_execution($execution_response){
-        if(is_array($execution_response) && array_key_exists("id", $execution_response)){
-            if($execution_response['id'] != '1'){
-                return ['query_has_run' => false, 'throw_error' => HttpErrors::code400('Erro de banco de dados: '. $execution_response['message'] .'')];
-            }else{
+    public function validate_data_execution($execution_response)
+    {
+        if (is_array($execution_response) && array_key_exists("id", $execution_response)) {
+            if ($execution_response['id'] != '1') {
+                return ['query_has_run' => false, 'throw_error' => HttpErrors::code400('Erro de banco de dados: ' . $execution_response['message'] . '')];
+            } else {
                 return ['query_has_run' => true];
             }
-        }else{
+        } else {
             return ['query_has_run' => true];
         }
     }
@@ -287,4 +284,18 @@ class Controller
         return $dataObj->format('Y-m-d');
     }
 
+    /**
+     * Função verifyQueryResult, retorna se a execução da query encontrou algum problema.
+     * @param array $queryResult Resultado da query executada.
+     * @return bool
+     */
+    public function validQueryResult($queryResult)
+    {
+        if (array_key_exists('valid', $queryResult)) {
+            if ($queryResult['valid'] == false) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

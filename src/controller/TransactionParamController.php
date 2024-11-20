@@ -28,6 +28,12 @@ class TransactionParamController extends Controller
             return $validate_query_status['throw_error'];
         }
 
+        $validQueryResult = $this->validQueryResult($result);
+
+        if (!$validQueryResult) {
+            return HttpErrors::code400($result);
+        }
+
         return HttpResponse::JSON([
             "data" => $result,
         ]);
@@ -42,6 +48,12 @@ class TransactionParamController extends Controller
 
         if (!$validate_query_status['query_has_run']) {
             return $validate_query_status['throw_error'];
+        }
+
+        $validQueryResult = $this->validQueryResult($result);
+
+        if (!$validQueryResult) {
+            return HttpErrors::code400($result);
         }
 
         return HttpResponse::JSON([
