@@ -29,7 +29,7 @@ class TransactionParamModel extends Model
             $query = "
             SELECT
             *
-            FROM transaction_params
+            FROM $this->table_name
             WHERE category = '$category'
             ";
 
