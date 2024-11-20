@@ -57,17 +57,5 @@ class TransactionController extends Controller
         }
 
         return HttpErrors::code400("User Id hasn't informed");
-
-
-        // $result = $transactionParam->getAllByCategory('GENDER');
-        // $validate_query_status = $this->validate_data_execution($result);
-
-        // if (!$validate_query_status['query_has_run']) {
-        //     return $validate_query_status['throw_error'];
-        // }
-
-        // return HttpResponse::JSON([
-        //     "data" => $result,
-        // ]);
     }
 }
