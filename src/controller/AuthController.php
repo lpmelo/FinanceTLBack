@@ -77,7 +77,7 @@ class authController extends Controller
             $valid_value = $this->validate_field_value($body, 'username', 'string');
             $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);      
             // A function customizada deve receber sempre 2 parametros conforme a custom_function na controller pai (valor do campo, corpo da requisicao)
-            $valid_value = $this->validate_field_value($body, "password", 'customizado', function ($field_value, $request_data) {
+            $valid_value = $this->validate_field_value($body, "password", 'custom', function ($field_value, $request_data) {
                 $validation_info = ['valid' => true, 'message' => ''];
                 // Valida com base em uma regra/lógica criada especificamente para este campo
                 // if($field_value == 'invalido'){
@@ -159,91 +159,5 @@ class authController extends Controller
 
         $validated_fields_info = ['valid_data' => $valid_data, 'invalid_message' => $return_invalid_message];
         return $validated_fields_info;
-    }
-
-
-
-    public function login($requisicao){
-        $requisicao['data']; //body
-        $requisicao['params']; //params
-        $requisicao['headers']; //headers
-
-        //Validando dados:
-        $this->validarDadosInsercaoUsuario($requisicao['data']);
-    }
-
-    private function validarDadosInsercaoUsuario($array)
-    {
-        $dadosCorretos = true;
-
-        $camposValidos = [
-            "fkIdPerfilUsuario",
-            "fkIdRegional",
-            "fkIdRegionalEspecifica",
-            "fkIdEmpresa",
-            "usuario",
-            "nome",
-            "email",
-            "senha",
-            "usuarioColaborador"
-        ];
-
-        $arrayCamposInvalidos = [];
-
-        $validacaoCampos = $this->validate_required_fields($camposValidos, $array);
-
-        $dadosCorretos = $validacaoCampos['dadosCorretos'];
-        $arrayCamposInvalidos = $validacaoCampos['arrayCamposInvalidos'];
-
-        if ($dadosCorretos) {
-            $valorValidado = $this->validate_field_value($array, 'fkIdPerfilUsuario', 'uuid');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'fkIdRegional', 'uuid');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'fkIdRegionalEspecifica', 'uuid');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'fkIdEmpresa', 'uuid');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'usuario', 'string');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'nome', 'string');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'senha', 'string');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-            $valorValidado = $this->validate_field_value($array, 'usuarioColaborador', 'booleano');
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-
-            $valorValidado = $this->validate_field_value($array, "email", 'customizado', function ($valorCampo, $arrayRequisicao) {
-                $respostaValidacao = ['valido' => true, 'mensagem' => ''];
-
-                if (str_contains($valorCampo, "@url.com.br") || str_contains($valorCampo, "@url.com.br")) {
-                    $respostaValidacao['valido'] = true;
-                } else {
-                    $respostaValidacao['valido'] = false;
-                    $respostaValidacao['mensagem'] = 'O email informado não é um e-mail pertencente ao dominio!';
-                }
-
-                return $respostaValidacao;
-            });
-            $arrayCamposInvalidos = $this->insert_valid_string($valorValidado, $arrayCamposInvalidos);
-
-        }
-
-        $camposInvalidos = $this->prepare_string_invalid_fields($arrayCamposInvalidos);
-
-        if ($camposInvalidos) {
-            $dadosCorretos = false;
-        }
-
-        $resultado = ['dadosCorretos' => $dadosCorretos, 'camposInvalidos' => $camposInvalidos];
-        return $resultado;
     }
 }

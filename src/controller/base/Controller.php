@@ -57,8 +57,8 @@ class Controller
      * Função validate_field_value, retorna uma string em caso do campo não estar de acordo com a validação.
      * @param array $request_fields Objeto recebido com os campos da requisição.
      * @param string $field_name Nome do campo a ser validado.
-     * @param string $validation_type Tipo da validação a ser realizada, pode ser: numero, inteiro, string, array, data, uuid, booleano ou customizada.
-     * @param callable $custom_function Função customizada que vai realizar a validação do valor do campo, deve retornar um objeto no formato: ['valido' => True ou False, 'message' => string].
+     * @param string $validation_type Tipo da validação a ser realizada, pode ser: number, int, string, array, date, datetime, uuid, booleano ou custom.
+     * @param callable $custom_function Função customizada que vai realizar a validação do valor do campo, deve retornar um objeto no formato: ['valid' => True ou False, 'message' => string].
      * @return string
      */
     public function validate_field_value($request_fields, $field_name, $validation_type, $custom_function = null)
@@ -70,12 +70,12 @@ class Controller
                 $field_value = $request_fields[$field_name];
 
                 switch ($validation_type) {
-                    case 'numero':
+                    case 'number':
                         if (!is_numeric($field_value)) {
                             $invalid_field_str = "$field_name não é um número";
                         }
                         break;
-                    case 'inteiro':
+                    case 'int':
                         if (!is_integer($field_value)) {
                             $invalid_field_str = "$field_name não é um número inteiro";
                         }
@@ -90,7 +90,7 @@ class Controller
                             $invalid_field_str = "$field_name não é um array";
                         }
                         break;
-                    case 'data':
+                    case 'date':
                         $pattern = '/^\d{4}-\d{2}-\d{2}$/';
                         if (!preg_match($pattern, $field_value)) {
                             $invalid_field_str = "$field_name não está no formato YYYY-MM-DD";
@@ -98,6 +98,29 @@ class Controller
                             list($year, $month, $day) = explode('-', $field_value);
                             if (!checkdate($month, $day, $year)) {
                                 $invalid_field_str = "$field_name não é uma data válida";
+                            }
+                        }
+                        break;
+                    case 'datetime':
+                        $pattern = '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/';
+                        if (!preg_match($pattern, $field_value)) {
+                            $invalid_field_str = "$field_name não está no formato YYYY-MM-DD HH:MM:SS";
+                        } else {
+                            list($date_part, $time_part) = explode(' ', $field_value);
+                            list($year, $month, $day) = explode('-', $date_part);
+
+                            if (!checkdate((int)$month, (int)$day, (int)$year)) {
+                                $invalid_field_str = "$field_name não é uma data válida";
+                            } else {
+
+                                list($hour, $minute, $second) = explode(':', $time_part);
+                                if (
+                                    (int)$hour < 0 || (int)$hour > 23 ||
+                                    (int)$minute < 0 || (int)$minute > 59 ||
+                                    (int)$second < 0 || (int)$second > 59
+                                ) {
+                                    $invalid_field_str = "$field_name contém uma hora inválida";
+                                }
                             }
                         }
                         break;
@@ -114,7 +137,7 @@ class Controller
                             $invalid_field_str = "$field_name não é uma string";
                         }
                         break;
-                    case 'booleano':
+                    case 'boolean':
                         if (is_bool($field_value)) {
                             if (empty($field_value) && $field_value != false) {
                                 $invalid_field_str = "$field_name vazio";

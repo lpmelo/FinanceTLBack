@@ -58,7 +58,7 @@ class UserController extends Controller
             $valid_value = $this->validate_field_value($request_data, 'name', 'string');
             $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
 
-            $validated_field = $this->validate_field_value($request_data, 'mail', 'customizado',function($value, $request_data){
+            $validated_field = $this->validate_field_value($request_data, 'mail', 'custom',function($value, $request_data){
                 $validate_info = ['valid' => true, 'message' => ''];
                 $regex = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
                 $valid_mail = preg_match($regex, $value);

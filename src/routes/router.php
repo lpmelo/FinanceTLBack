@@ -14,7 +14,8 @@ class router
             Route::POST('/auth/check', 'Controller\AuthController', 'checkAuth'),
             Route::GET('/transaction-params/genders', 'Controller\TransactionParamController', 'getAllGenders')->middleware(["AuthMiddleware"]),
             Route::GET('/transaction-params/types', 'Controller\TransactionParamController', 'getAllTypes')->middleware(["AuthMiddleware"]),
-            Route::GET('/transactions/user/{id}', 'Controller\TransactionController', 'getAllTransactionsByUserId')->middleware(["AuthMiddleware"])
+            Route::GET('/transactions/user/{id}', 'Controller\TransactionController', 'getAllTransactionsByUserId')->middleware(["AuthMiddleware"]),
+            Route::POST('/ttransactions/create', 'Controller\TransactionController', 'createTransaction')->middleware(["AuthMiddleware"])
         ];
     }
 }

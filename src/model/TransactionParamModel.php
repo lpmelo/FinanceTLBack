@@ -47,6 +47,10 @@ class TransactionParamModel extends Model
         }
     }
 
+    public function create_transaction(){
+        
+    }
+
     public function get_id()
     {
         return $this->id_transaction_param_pk;
