@@ -7,7 +7,7 @@ use Model\Base\Model;
 class TransactionParamModel extends Model
 {
     protected $table_name = "transaction_params";
-    protected $chavePrimaria = 'id';
+    protected $chavePrimaria = 'id_transaction_param_pk';
     protected $camposOcultos = [];
     protected $id_transaction_param_pk;
     protected $description;
@@ -47,8 +47,86 @@ class TransactionParamModel extends Model
         }
     }
 
-    public function create_transaction(){
-        
+    public function getById($transactionParamId)
+    {
+        $query = "
+            SELECT
+            *
+            FROM $this->table_name
+            WHERE $this->chavePrimaria = '$transactionParamId'
+            ";
+
+        $result = $this->mysql->db_run($query);
+
+        if (!$result) {
+            return ['valid' => false, 'error' => "There wasn't any transaction param with this Id"];
+        }
+
+        $result = $this->hide_fields($result, ['created_at', 'updated_at']);
+
+        return $result;
+    }
+
+    public function getGenderById($transactionParamId)
+    {
+        $query = "
+            SELECT
+            *
+            FROM $this->table_name
+            WHERE $this->chavePrimaria = '$transactionParamId'
+            AND category = 'GENDER';
+            ";
+
+        $result = $this->mysql->db_run($query);
+
+        if (!$result) {
+            return ['valid' => false, 'error' => "There wasn't any transaction param of category GENDER with this Id"];
+        }
+
+        $result = $this->hide_fields($result, ['created_at', 'updated_at']);
+
+        return $result;
+    }
+
+    public function getTypeById($transactionParamId)
+    {
+        $query = "
+            SELECT
+            *
+            FROM $this->table_name
+            WHERE $this->chavePrimaria = '$transactionParamId'
+            AND category = 'TYPE';
+            ";
+
+        $result = $this->mysql->db_run($query);
+
+        if (!$result) {
+            return ['valid' => false, 'error' => "There wasn't any transaction param of category TYPE with this Id"];
+        }
+
+        $result = $this->hide_fields($result, ['created_at', 'updated_at']);
+
+        return $result;
+    }
+
+    public function getByDescription($description)
+    {
+        $query = "
+            SELECT
+            *
+            FROM $this->table_name
+            WHERE description = '$description'
+            ";
+
+        $result = $this->mysql->db_run($query);
+
+        if (!$result) {
+            return ['valid' => false, 'error' => "There wasn't any transaction param with this description"];
+        }
+
+        $result = $this->hide_fields($result, ['created_at', 'updated_at']);
+
+        return $result;
     }
 
     public function get_id()

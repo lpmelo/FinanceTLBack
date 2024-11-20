@@ -7,6 +7,8 @@ use Modules\Data\MySqlConnector;
 use Ramsey\Uuid\Nonstandard\Uuid;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Ramsey\Uuid\Rfc4122\UuidV4;
+use Ramsey\Uuid\Uuid as UuidUuid;
 
 class Model
 {
@@ -55,7 +57,7 @@ class Model
     {
         if (!empty($esconderCamposArray) && is_array($resultadosArray)) {
             foreach ($resultadosArray as &$registro) {
-                if(is_array($registro)){
+                if (is_array($registro)) {
                     foreach ($esconderCamposArray as $campo) {
                         unset($registro[$campo]);
                     }
@@ -81,5 +83,10 @@ class Model
         }
 
         return $resultado;
+    }
+
+    public function generateUuid()
+    {
+        return Uuid::uuid4();
     }
 }

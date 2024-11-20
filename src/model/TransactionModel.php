@@ -16,6 +16,8 @@ class TransactionModel extends Model
     protected $description;
     protected $value;
     protected $date;
+    protected $recurrence;
+    protected $plot_identification;
     protected $plot_total;
     protected $plot_number;
     protected $created_at;
@@ -51,6 +53,46 @@ class TransactionModel extends Model
         } else {
             return ['valid' => false, 'error' => "Has been informed a invalid userId"];
         }
+    }
+
+    public function createTransaction(){
+        $recurrence = $this->recurrence ? 'Y' : 'N';
+        $plotIdentification = $this->plot_identification ? $this->plot_identification : 'null';
+        $plotTotal = $this->plot_total ? $this->plot_total : 'null';
+        $plotNumber = $this->plot_number ? $this->plot_number : 'null';
+
+        $query = "
+        INSERT INTO $this->table_name
+        (id_user_fk,
+            id_type_fk,
+            id_gender_fk,
+            description,
+            value,
+            `date`,
+            recurrence,
+            plot_identification,
+            plot_total,
+            plot_number,
+            created_at,
+            updated_at
+        )VALUES(
+            $this->id_user_fk,
+            $this->id_type_fk,
+            $this->id_gender_fk,
+            '$this->description',
+            $this->value,
+            '$this->date',
+            '$recurrence',
+            $plotIdentification,
+            $plotTotal,
+            $plotNumber,
+            current_timestamp(),
+            current_timestamp()
+        );
+        ";
+
+        $data = $this->mysql->db_insert($query);
+        return $data;
     }
 
     public function getIdTransactionPk()
@@ -121,6 +163,31 @@ class TransactionModel extends Model
     public function setDate($date)
     {
         $this->date = $date;
+    }
+
+    public function getRecurrence()
+    {
+        return $this->recurrence;
+    }
+
+    public function setRecurrence($recurrence)
+    {
+        $this->recurrence = $recurrence;
+    }
+
+    public function getPlotIdentification()
+    {
+        return $this->plot_identification;
+    }
+
+    public function setPlotIdentification($plot_identification)
+    {
+        return $this->plot_identification = $plot_identification;
+    }
+
+    public function generateUuidPlotIdentification()
+    {
+        $this->plot_identification = $this->generateUuid();
     }
 
     public function getPlotTotal()

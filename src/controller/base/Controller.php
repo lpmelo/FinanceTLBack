@@ -213,6 +213,11 @@ class Controller
                 return ['query_has_run' => true];
             }
         } else {
+            if (is_array($execution_response) && array_key_exists("valid", $execution_response) && array_key_exists("error", $execution_response)) {
+                if ($execution_response['valid'] == false) {
+                    return ['query_has_run' => false, 'throw_error' => HttpErrors::code400($execution_response['error'])];
+                }
+            }
             return ['query_has_run' => true];
         }
     }

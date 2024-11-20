@@ -4,6 +4,7 @@ namespace Controller;
 
 use Controller\Base\Controller;
 use Model\TransactionModel;
+use Model\TransactionParamModel;
 use Model\UserModel;
 use Modules\Helpers\Manager\Errors\HttpErrors;
 use Modules\Helpers\Manager\Response\HttpResponse;
@@ -59,13 +60,107 @@ class TransactionController extends Controller
         return HttpErrors::code400("User Id hasn't informed");
     }
 
-    public function createTransaction($request) {}
+    public function createTransaction($request)
+    {
+        $body = $request['data'];
+
+        $validation = $this->validateCreateTransaction($body);
+
+        if ($validation['validFields']) {
+            $description = $body['description'];
+            $value = $body['value'];
+            $idUserFk = $body['id_user_fk'];
+            $date = $body['date'];
+            $idTypeFk = array_key_exists('id_type_fk', $body) ? $body['id_type_fk'] : null;
+            $idGenderFk = array_key_exists('id_gender_fk', $body) ? $body['id_gender_fk'] : null;
+            $plotTotal = array_key_exists('plot_total', $body) ? $body['plot_total'] : null;
+            $recurrence = array_key_exists('recurrence', $body) ? $body['recurrence'] : ($plotTotal ? true : null);
+
+
+            $userModel = new UserModel();
+            $result = $userModel->getUserById($idUserFk);
+
+            $validate_query_status = $this->validate_data_execution($result);
+
+            if (!$validate_query_status['query_has_run']) {
+                return $validate_query_status['throw_error'];
+            }
+
+            $transactionModel = new TransactionModel();
+
+            if (!empty($idTypeFk)) {
+                $transactionParamsModel = new TransactionParamModel();
+                $result = $transactionParamsModel->getTypeById($idTypeFk);
+
+                $validate_query_status = $this->validate_data_execution($result);
+
+                if (!$validate_query_status['query_has_run']) {
+                    return $validate_query_status['throw_error'];
+                }
+
+                $transactionModel->setIdTypeFk($idTypeFk);
+            } else {
+                $transactionType = $value > 0 ? 4 : 5;
+                $transactionModel->setIdTypeFk($transactionType);
+            }
+
+            if (!empty($idGenderFk)) {
+                $result = $transactionParamsModel->getGenderById($idGenderFk);
+
+                $validate_query_status = $this->validate_data_execution($result);
+
+                if (!$validate_query_status['query_has_run']) {
+                    return $validate_query_status['throw_error'];
+                }
+
+                $transactionModel->setIdGenderFk($idGenderFk);
+            } else {
+                $transactionModel->setIdGenderFk(3);
+            }
+
+            if ($recurrence || $plotTotal) {
+                $transactionModel->setRecurrence($recurrence);
+            }
+
+            if ($plotTotal) {
+                $plotValue = $value / $plotTotal;
+
+                $transactionModel->setPlotTotal($plotTotal);
+                $transactionModel->setPlotNumber(1);
+                $transactionModel->generateUuidPlotIdentification();
+                $transactionModel->setValue($plotValue);
+            }
+
+            $transactionModel->setIdUserFk($idUserFk);
+            $transactionModel->setDescription($description);
+            $transactionModel->setDate($date);
+
+            if (!$transactionModel->getValue()) {
+                $transactionModel->setValue($value);
+            }
+
+            $result = $transactionModel->createTransaction();
+
+            $validate_query_status = $this->validate_data_execution($result);
+
+            if (!$validate_query_status['query_has_run']) {
+                return $validate_query_status['throw_error'];
+            }
+
+            return HttpResponse::JSON([
+                'success' => true,
+                'message' => 'Transação criada com sucesso!'
+            ]);
+        }
+        return HttpErrors::code400($validation['invalidFields']);
+    }
 
     private function validateCreateTransaction($request_data)
     {
         $valid_data = true;
 
         $requiredFields = [
+            "id_user_fk",
             "description",
             "value",
             "date"
@@ -77,15 +172,38 @@ class TransactionController extends Controller
         $invalid_fields = $fields_validation['invalid_fields'];
 
         if ($valid_data) {
+            $valid_value = $this->validate_field_value($request_data, 'id_user_fk', 'number');
+            $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
+
             $valid_value = $this->validate_field_value($request_data, 'description', 'string');
+            $valid_value = empty($request_data['description']) ? 'description está vazio' : "";
             $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
 
             $valid_value = $this->validate_field_value($request_data, 'value', 'number');
             $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
 
             $validated_field = $this->validate_field_value($request_data, 'date', 'datetime');
-
             $invalid_fields = $this->insert_valid_string($validated_field, $invalid_fields);
+
+            if (array_key_exists('recurrence', $request_data)) {
+                $valid_value = $this->validate_field_value($request_data, 'recurrence', 'boolean');
+                $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
+            }
+
+            if (array_key_exists('id_type_fk', $request_data)) {
+                $valid_value = $this->validate_field_value($request_data, 'id_type_fk', 'number');
+                $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
+            }
+
+            if (array_key_exists('id_gender_fk', $request_data)) {
+                $valid_value = $this->validate_field_value($request_data, 'id_gender_fk', 'number');
+                $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
+            }
+
+            if (array_key_exists('plot_total', $request_data)) {
+                $valid_value = $this->validate_field_value($request_data, 'plot_total', 'number');
+                $invalid_fields = $this->insert_valid_string($valid_value, $invalid_fields);
+            }
         }
 
         $invalid_fields = $this->prepare_string_invalid_fields($invalid_fields);
