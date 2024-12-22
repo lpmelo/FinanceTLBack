@@ -129,7 +129,11 @@ class TransactionController extends Controller
 
             if ($plotTotal && $idGenderFk == 1) {
                 if ($value > 0) {
-                    $plotValue = $value / $plotTotal;
+                    if ($idTypeFk == 5) {
+                        $plotValue = - ($value / $plotTotal);
+                    } else {
+                        $plotValue = $value / $plotTotal;
+                    }
 
                     $transactionModel->setPlotTotal($plotTotal);
                     $transactionModel->setPlotNumber(1);
@@ -193,9 +197,8 @@ class TransactionController extends Controller
                     if (isset($transactionData['recurrence_id'])) {
                         $arrayKey = array_search($transactionData['recurrence_id'], array_column($actualUserTransactions, 'recurrence_id'));
 
-                        if ($arrayKey == false && $arrayKey != 0) {
+                        if (!is_numeric($arrayKey) && $arrayKey == false) {
                             $transactionMissed = array($previousRecurrenceTransactions[$index]);
-
                             $this->createTransactionByData($idUserFk, $transactionModel, $transactionMissed);
                         }
                     }
