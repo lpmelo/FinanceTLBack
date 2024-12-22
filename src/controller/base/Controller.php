@@ -269,27 +269,46 @@ class Controller
     }
 
     /**
-     * Função retornarDataSubtraindoMeses, retorna a data do resultado da subtração entre a data informada e o número de meses informado.
-     * @param string $data String de data no formato (YYYY-MM-DD).
-     * @param int $meses Número de meses a serem subtraídos da data informada.
+     * Função returnDateSubtractingMonths, retorna a data do resultado da subtração entre a data informada e o número de meses informado.
+     * @param string $date String de data no formato (YYYY-MM-DD).
+     * @param int $months Número de meses a serem subtraídos da data informada.
      * @return string
      */
-    public function retornarDataSubtraindoMeses($data, $meses)
+    public function returnDateSubtractingMonths($date, $months)
     {
-        // Criar um objeto DateTime a partir da data fornecida
-        $dataObj = DateTime::createFromFormat('Y-m-d', $data);
+        $dateObj = DateTime::createFromFormat('Y-m-d', $date);
 
-        // Verificar se a data é válida
-        if (!$dataObj) {
+        if (!$dateObj) {
             return "Formato de data inválido.";
         }
 
-        // Subtrair os meses especificados
-        $dataObj->modify("-$meses months");
+        $dateObj->modify("-$months months");
 
-        // Retornar a data no formato desejado
-        return $dataObj->format('Y-m-d');
+        return $dateObj->format('Y-m-d');
     }
+
+    /**
+     * Função returnDateAddingMonths, retorna a data do resultado da soma entre a data informada e o número de meses informado.
+     * @param string $date String de data no formato (YYYY-MM-DD).
+     * @param int $months Número de meses a serem somados na data informada.
+     * @return string
+     */
+    public function returnDateAddingMonths($date, $months)
+    {
+        $format = strpos($date, ' ') !== false ? 'Y-m-d H:i:s' : 'Y-m-d';
+    
+        $dateObj = DateTime::createFromFormat($format, $date);
+    
+        if (!$dateObj) {
+            return "Formato de data inválido.";
+        }
+    
+        $dateObj->modify("+$months months");
+    
+        return $dateObj->format($format);
+    }
+    
+
 
     /**
      * Função retornarDataSubtraindoSemanas, retorna a data do resultado da subtração entre a data informada e o número de semanas informado.

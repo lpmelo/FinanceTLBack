@@ -17,7 +17,7 @@ class TransactionModel extends Model
     protected $value;
     protected $date;
     protected $recurrence;
-    protected $plot_identification;
+    protected $recurrence_id;
     protected $plot_total_value;
     protected $plot_total;
     protected $plot_number;
@@ -56,10 +56,54 @@ class TransactionModel extends Model
         }
     }
 
+    public function getAllByMonthAndUserId($userId, $dateRef)
+    {
+        if (!empty($userId)) {
+
+            $query = "
+            SELECT
+            *
+            FROM $this->table_name
+            WHERE id_user_fk = $userId
+            AND DATE_FORMAT(date, '%Y-%m-01') = '$dateRef'
+            ";
+
+            $result = $this->mysql->db_run($query);
+
+            $result = $this->hide_fields($result, ['created_at', 'updated_at']);
+
+            return $result;
+        } else {
+            return ['valid' => false, 'error' => "Has been informed a invalid userId"];
+        }
+    }
+
+    public function getAllRecurrenceByUserId($userId, $dateRef)
+    {
+        if (!empty($userId)) {
+            $query = "
+            SELECT
+            *
+            FROM $this->table_name
+            WHERE id_user_fk = $userId
+            AND recurrence = 'Y'
+            AND DATE_FORMAT(date, '%Y-%m-01') = '$dateRef'
+            ";
+
+            $result = $this->mysql->db_run($query);
+
+            $result = $this->hide_fields($result, ['created_at', 'updated_at']);
+
+            return $result;
+        } else {
+            return ['valid' => false, 'error' => "Has been informed a invalid userId"];
+        }
+    }
+
     public function createTransaction()
     {
         $recurrence = $this->recurrence ? 'Y' : 'N';
-        $plotIdentification = $this->plot_identification ? "'$this->plot_identification'" : 'null';
+        $plotIdentification = $this->recurrence_id ? "'$this->recurrence_id'" : 'null';
         $plotTotal = $this->plot_total ? $this->plot_total : 'null';
         $plotNumber = $this->plot_number ? $this->plot_number : 'null';
         $plotTotalValue = $this->plot_total_value ? $this->plot_total_value : 'null';
@@ -73,7 +117,7 @@ class TransactionModel extends Model
             value,
             `date`,
             recurrence,
-            plot_identification,
+            recurrence_id,
             plot_total_value,
             plot_total,
             plot_number,
@@ -180,19 +224,19 @@ class TransactionModel extends Model
         $this->recurrence = $recurrence;
     }
 
-    public function getPlotIdentification()
+    public function getRecurrenceId()
     {
-        return $this->plot_identification;
+        return $this->recurrence_id;
     }
 
-    public function setPlotIdentification($plot_identification)
+    public function setRecurrenceId($recurrence_id)
     {
-        return $this->plot_identification = $plot_identification;
+        return $this->recurrence_id = $recurrence_id;
     }
 
-    public function generateUuidPlotIdentification()
+    public function generateUuidRecurrenceId()
     {
-        $this->plot_identification = $this->generateUuid();
+        $this->recurrence_id = $this->generateUuid();
     }
 
     public function getPlotTotalValue()
