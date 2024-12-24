@@ -61,11 +61,24 @@ class TransactionModel extends Model
         if (!empty($userId)) {
 
             $query = "
-            SELECT
-            *
-            FROM $this->table_name
-            WHERE id_user_fk = $userId
-            AND DATE_FORMAT(date, '%Y-%m-01') = '$dateRef'
+                SELECT
+                    t.id_transaction_pk,
+                    tt.description as type,
+                    tg.description as gender,
+                    t.value,
+                    t.date,
+                    (case
+                        when t.plot_total is not null and t.plot_number is not null
+                            then CONCAT(t.plot_number, '/', t.plot_total)
+                        else NULL
+                    end) as plotDetail,
+                    t.description 
+                FROM
+                    $this->table_name t 
+                LEFT JOIN transaction_params tt ON t.id_type_fk = tt.id_transaction_param_pk 
+                LEFT JOIN transaction_params tg ON t.id_gender_fk = tg.id_transaction_param_pk
+                WHERE t.id_user_fk = $userId
+                AND DATE_FORMAT(t.date, '%Y-%m-01') = '$dateRef'
             ";
 
             $result = $this->mysql->db_run($query);
