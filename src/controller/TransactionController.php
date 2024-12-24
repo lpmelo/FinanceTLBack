@@ -219,6 +219,37 @@ class TransactionController extends Controller
         return HttpErrors::code400($validation['invalidFields']);
     }
 
+    public function getUserBalance($request)
+    {
+        $params = $request['params'];
+        $idUser = $params[0];
+        $dateRef = $params[1];
+
+        $userModel = new UserModel();
+        $result = $userModel->getUserById($idUser);
+
+        $validate_query_status = $this->validate_data_execution($result);
+
+        if (!$validate_query_status['query_has_run']) {
+            return $validate_query_status['throw_error'];
+        }
+
+        $transactionModel = new TransactionModel();
+        $result = $transactionModel->getBalance($idUser, $dateRef);
+
+        $validate_query_status = $this->validate_data_execution($result);
+
+        if (!$validate_query_status['query_has_run']) {
+            return $validate_query_status['throw_error'];
+        }
+
+        if(!empty($result)){
+            return HttpResponse::JSON($result[0]);
+        }
+
+        return HttpResponse::JSON(["balance" => 0]);
+    }
+
     private function createTransactionByData($idUserFk, $transactionModelInstance, $transactionArray)
     {
         if (!empty($transactionArray) && ($transactionModelInstance instanceof TransactionModel) && !empty($idUserFk)) {

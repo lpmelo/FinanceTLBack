@@ -157,6 +157,25 @@ class TransactionModel extends Model
         return $data;
     }
 
+    public function getBalance($userId, $dateRef)
+    {
+        if (!empty($userId)) {
+            $query = "
+                SELECT
+                    SUM(t.value) as balance
+                FROM transactions t 
+                WHERE t.id_user_fk = $userId
+                AND DATE_FORMAT(t.date, '%Y-%m-01') = '$dateRef'
+            ";
+
+            $result = $this->mysql->db_run($query);
+
+            return $result;
+        } else {
+            return ['valid' => false, 'error' => "Has been informed a invalid userId"];
+        }
+    }
+
     public function getIdTransactionPk()
     {
         return $this->id_transaction_pk;
