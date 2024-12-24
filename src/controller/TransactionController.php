@@ -247,7 +247,7 @@ class TransactionController extends Controller
             return HttpResponse::JSON($result[0]);
         }
 
-        return HttpResponse::JSON(["balance" => 0]);
+        return HttpResponse::JSON(["balance" => 0, "entries_balance"=> 0, "exits_balance"=> 0]);
     }
 
     private function createTransactionByData($idUserFk, $transactionModelInstance, $transactionArray)
