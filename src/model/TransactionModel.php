@@ -163,9 +163,9 @@ class TransactionModel extends Model
         if (!empty($userId)) {
             $query = "
                 SELECT
-                    SUM(t.value) as balance,
-                    (select sum(ts1.value) from transactions ts1 where ts1.id_user_fk = $userId AND DATE_FORMAT(ts1.date, '%Y-%m-01') = '$dateRef'and ts1.value > 0) as entries_balance,
-                    (select sum(ts2.value) from transactions ts2 where ts2.id_user_fk = $userId AND DATE_FORMAT(ts2.date, '%Y-%m-01') = '$dateRef' and ts2.value < 0) as exits_balance
+                    IFNULL(SUM(t.value), 0) as balance,
+                    IFNULL((select sum(ts1.value) from transactions ts1 where ts1.id_user_fk = $userId AND DATE_FORMAT(ts1.date, '%Y-%m-01') = '$dateRef'and ts1.value > 0),0) as entries_balance,
+                    IFNULL((select sum(ts2.value) from transactions ts2 where ts2.id_user_fk = $userId AND DATE_FORMAT(ts2.date, '%Y-%m-01') = '$dateRef' and ts2.value < 0),0) as exits_balance
                 FROM transactions t 
                 WHERE t.id_user_fk = $userId
                 AND DATE_FORMAT(t.date, '%Y-%m-01') = '$dateRef'

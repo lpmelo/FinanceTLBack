@@ -243,11 +243,11 @@ class TransactionController extends Controller
             return $validate_query_status['throw_error'];
         }
 
-        if(!empty($result)){
+        if (!empty($result)) {
             return HttpResponse::JSON($result[0]);
         }
 
-        return HttpResponse::JSON(["balance" => 0, "entries_balance"=> 0, "exits_balance"=> 0]);
+        return HttpResponse::JSON(["balance" => 0, "entries_balance" => 0, "exits_balance" => 0]);
     }
 
     private function createTransactionByData($idUserFk, $transactionModelInstance, $transactionArray)
