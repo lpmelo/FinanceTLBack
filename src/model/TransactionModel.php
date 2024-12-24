@@ -79,6 +79,7 @@ class TransactionModel extends Model
                 LEFT JOIN transaction_params tg ON t.id_gender_fk = tg.id_transaction_param_pk
                 WHERE t.id_user_fk = $userId
                 AND DATE_FORMAT(t.date, '%Y-%m-01') = '$dateRef'
+                ORDER BY t.date DESC
             ";
 
             $result = $this->mysql->db_run($query);
