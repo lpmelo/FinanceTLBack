@@ -2,7 +2,7 @@
 
 namespace Modules\Helpers\Manager\Response;
 
-class httpresponse
+class HttpResponse
 {
     public static function JSON($object)
     {

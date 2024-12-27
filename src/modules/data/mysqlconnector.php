@@ -5,7 +5,7 @@ namespace Modules\Data;
 use PDO;
 use Exception;
 
-class mysqlconnector
+class MySqlConnector
 {
     private $host;
     private $username;

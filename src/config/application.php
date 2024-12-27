@@ -4,7 +4,7 @@ namespace Config;
 
 use Config\HttpHandler;
 
-class application
+class Application
 {
     private $handler;
     public function __construct()

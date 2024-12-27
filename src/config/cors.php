@@ -2,7 +2,7 @@
 
 namespace Config;
 
-class cors
+class Cors
 {
     public static function corsOptions()
     {

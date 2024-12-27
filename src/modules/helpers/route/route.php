@@ -2,7 +2,7 @@
 
 namespace Modules\Helpers\Route;
 
-class route
+class Route
 {
     private $route;
     private $controller;

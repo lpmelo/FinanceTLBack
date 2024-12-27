@@ -4,7 +4,7 @@ namespace Routes;
 
 use Modules\Helpers\Route\Route;
 
-class router
+class Router
 {
     public static function init()
     {

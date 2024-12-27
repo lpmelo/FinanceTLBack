@@ -4,7 +4,7 @@ namespace Modules\Helpers\Manager\Errors;
 
 use Modules\Helpers\Manager\Response\HttpResponse;
 
-class httperrors
+class HttpErrors
 {
     public static function code404($message = 'Not Found')
     {

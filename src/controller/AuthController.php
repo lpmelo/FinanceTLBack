@@ -4,12 +4,11 @@ namespace Controller;
 
 use Controller\Base\Controller;
 use Model\AuthModel;
-use Model\PermissaoTelaModel;
 use Model\UserModel;
 use Modules\Helpers\Manager\Errors\HttpErrors;
 use Modules\Helpers\Manager\Response\HttpResponse;
 
-class authController extends Controller
+class AuthController extends Controller
 {
     public function __construct()
     {

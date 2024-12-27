@@ -6,7 +6,7 @@ use Modules\Helpers\Manager\Errors\HttpErrors;
 use Routes\Router;
 use Middlewares\Base\Middleware;
 
-class httphandler
+class HttpHandler
 {
     public function handleRequest()
     {

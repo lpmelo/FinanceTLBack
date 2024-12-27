@@ -3,7 +3,7 @@ namespace Modules\Helpers\Faker;
 
 use DateTime;
 
-class faker
+class Faker
 {
     public static function return_db_moc(){
 
