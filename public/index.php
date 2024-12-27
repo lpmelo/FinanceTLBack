@@ -5,6 +5,7 @@ use Config\Application;
 use Config\Cors;
 
 $baseDir = str_replace("\public", '', __DIR__);
+$baseDir = str_replace("/public", '', __DIR__);
 $dotenv = Dotenv\Dotenv::createImmutable($baseDir);
 $dotenv->load();
 

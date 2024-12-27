@@ -28,6 +28,7 @@
             "Routes\\": "src/routes",
             "Middlewares\\": "src/middlewares",
             "Middlewares\\Base\\": "src/middlewares/base"
-        }
+        },
+        "classmap": ["src"]
     }
 }
