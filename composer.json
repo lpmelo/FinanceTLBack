@@ -1,34 +1,52 @@
 {
-    "require": {
-        "ramsey/uuid": "^4.7",
-        "vlucas/phpdotenv": "^5.6",
-        "firebase/php-jwt": "^6.10"
+  "require": {
+    "ramsey/uuid": "^4.7",
+    "vlucas/phpdotenv": "^5.6",
+    "firebase/php-jwt": "^6.10",
+    "robmorgan/phinx": "^0.16.6"
+  },
+  "scripts": {
+    "start": [
+      "Composer\\Config::disableProcessTimeout",
+      "php -S localhost:8000 -t public"
+    ],
+    "migrate": [
+      "vendor/bin/phinx migrate"
+    ],
+    "createMigration": [
+      "vendor/bin/phinx create"
+    ],
+    "rollbackMigration": [
+      "vendor/bin/phinx rollback"
+    ],
+    "createSeed": [
+      "vendor/bin/phinx seed:create"
+    ],
+    "runSeed": [
+      "vendor/bin/phinx seed:run"
+    ]
+  },
+  "autoload": {
+    "psr-4": {
+      "Config\\": "src/config",
+      "Controller\\": "src/controller",
+      "Controller\\Base\\": "src/controller/base",
+      "Model\\": "src/model",
+      "Model\\Base\\": "src/model/base",
+      "Modules\\": "src/modules",
+      "Modules\\Data\\": "src/modules/data",
+      "Modules\\Helpers\\": "src/modules/helpers",
+      "Modules\\Helpers\\Manager\\": "src/modules/helpers/manager",
+      "Modules\\Helpers\\Manager\\Errors\\": "src/modules/helpers/errors",
+      "Modules\\Helpers\\Manager\\Response\\": "src/modules/helpers/response",
+      "Modules\\Helpers\\Route\\": "src/modules/helpers/route",
+      "Modules\\Helpers\\Faker\\": "src/modules/helpers/faker",
+      "Routes\\": "src/routes",
+      "Middlewares\\": "src/middlewares",
+      "Middlewares\\Base\\": "src/middlewares/base"
     },
-    "scripts": {
-        "start": [
-            "Composer\\Config::disableProcessTimeout",
-            "php -S localhost:8000 -t public"
-        ]
-    },
-    "autoload": {
-        "psr-4": {
-            "Config\\": "src/config",
-            "Controller\\": "src/controller",
-            "Controller\\Base\\": "src/controller/base",
-            "Model\\": "src/model",
-            "Model\\Base\\": "src/model/base",
-            "Modules\\": "src/modules",
-            "Modules\\Data\\": "src/modules/data",
-            "Modules\\Helpers\\": "src/modules/helpers",
-            "Modules\\Helpers\\Manager\\": "src/modules/helpers/manager",
-            "Modules\\Helpers\\Manager\\Errors\\": "src/modules/helpers/errors",
-            "Modules\\Helpers\\Manager\\Response\\": "src/modules/helpers/response",
-            "Modules\\Helpers\\Route\\": "src/modules/helpers/route",
-            "Modules\\Helpers\\Faker\\": "src/modules/helpers/faker",
-            "Routes\\": "src/routes",
-            "Middlewares\\": "src/middlewares",
-            "Middlewares\\Base\\": "src/middlewares/base"
-        },
-        "classmap": ["src"]
-    }
+    "classmap": [
+      "src"
+    ]
+  }
 }
