@@ -44,7 +44,8 @@ class UserModel extends Model
             SELECT 
                 *
             FROM users 
-            WHERE username = '" . $credentials['username'] . "'
+            WHERE (username = '" . $credentials['username'] . "'
+            OR mail = '" . $credentials['username'] . "')
             AND password = '" . $credentials['password'] . "'
         ";
 
@@ -61,7 +62,7 @@ class UserModel extends Model
             FROM $this->table_name 
             WHERE id_user_pk = $userId
         ";
-     
+
 
         $user_info = $this->mysql->db_run($select_user_info);
 
