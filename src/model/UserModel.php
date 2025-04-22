@@ -25,11 +25,21 @@ class UserModel extends Model
     {
         $user_query = "
             INSERT INTO $this->table_name(
+                username,
+                nickname,
                 name, 
-                mail
+                mail,
+                password,
+                created_at,
+                updated_at
             )VALUES(   
+                '$this->username',
+                '$this->nickname',
                 '$this->name',
-                '$this->mail'
+                '$this->mail',
+                '$this->password',
+                NOW(),
+                NOW()
             );
         ";
         $data = $this->mysql->db_insert($user_query);
@@ -111,16 +121,16 @@ class UserModel extends Model
 
     public function set_username($username)
     {
-        $this->name = $username;
+        $this->username = $username;
     }
 
     public function get_password()
     {
-        return $this->username;
+        return $this->password;
     }
 
-    public function set_password($username)
+    public function set_password($password)
     {
-        $this->name = $username;
+        $this->password = $password;
     }
 }
